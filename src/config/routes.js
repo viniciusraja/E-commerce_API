@@ -1,60 +1,68 @@
 const multer = require('multer')
 const multerConfig=require('./multer')
+const admin = require('./admin')
 module.exports=app=>{
     app.post('/signup', app.src.api.user.save)
-    // app.post('/signin', app.src.api.auth.signin)
-    // app.post('/validateToken', app.src.api.auth.validateToken)
+    app.post('/signin', app.src.api.authentication.signin)
+    app.post('/validateToken', app.src.api.authentication.validateToken)
 
     app.route('/users')
-        // .all(app.config.passport.authenticate())
+        .all(app.src.config.passport.authenticate())
         .post(app.src.api.user.save)
         .get(app.src.api.user.get)
         
         app.route('/users/:id')
-        //     .all(app.config.passport.authenticate())
-        .put(app.src.api.user.save)
-        .get(app.src.api.user.getById)
+        .all(app.src.config.passport.authenticate())
+        .put(admin(app.src.api.user.save))
+        .get(admin(app.src.api.user.getById))
         .delete(app.src.api.user.remove)
         
         app.route('/users/:id/adress')
+        .all(app.src.config.passport.authenticate())
         .get(app.src.api.adress.getByUser)
         
-    app.route('/adress')
+        app.route('/adress')
+        .all(app.src.config.passport.authenticate())
         .post(app.src.api.adress.save)
         
         app.route('/adress/:id')
+        .all(app.src.config.passport.authenticate())
         .put(app.src.api.adress.save)
         .delete(app.src.api.adress.remove)
-
-    app.route('/categories')
+        
+        app.route('/categories')
+        .all(app.src.config.passport.authenticate())
         .post(app.src.api.productsCategory.save)
         .get(app.src.api.productsCategory.get)
         
         app.route('/categories/:id')
+        .all(app.src.config.passport.authenticate())
         .put(app.src.api.productsCategory.save)
         .get(app.src.api.productsCategory.getById)
         .delete(app.src.api.productsCategory.remove)
-
+        
         app.route('/categories/:id/products')
+        .all(app.src.config.passport.authenticate())
         .get(app.src.api.product.getByCategory)
-    
-    app.route('/products')
-    //     .all(app.config.passport.authenticate())
-    //     .put(admin(app.src.api.user.save))
-    .post(app.src.api.product.save)
-    .get(app.src.api.product.get)
-    //     .delete(admin(app.src.api.user.remove))
+        
+        app.route('/products')
+        .all(app.src.config.passport.authenticate())
+        .post(app.src.api.product.save)
+        .get(app.src.api.product.get)
+        
         app.route('/products/:id')
+        .all(app.src.config.passport.authenticate())
         .get(app.src.api.product.getById)
         .put(app.src.api.product.save)
         .delete(app.src.api.product.remove)
         
         app.route('/products/:id/image')
+        .all(app.src.config.passport.authenticate())
         .post(multer(multerConfig).single('file'),app.src.api.productImage.save)
         .put(multer(multerConfig).single('file'),app.src.api.productImage.save)
         .get(app.src.api.productImage.getByProduct)
-        
-        app.route('/image/:id')
         .delete(app.src.api.productImage.remove)
-
+        
+        
+        
     }
