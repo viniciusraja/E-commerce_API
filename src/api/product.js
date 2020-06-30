@@ -1,45 +1,52 @@
-const productImage = require("./productImage")
+const cloudinary = require('cloudinary').v2;
 
 module.exports = app => {
-    const { existsOrError } = app.src.api.validation
+    const { existsOrError, notExistsOrError } = app.src.api.validation
 
     const save = (req, res) => {
-        const product = { ...req.body }
-        if(req.params.id) product.id = req.params.id
-
+        const {name, price, ingredients_details, allergic_information, category_id=""} = { ...req.body }
+        const id=req.params.id
         try {
-            existsOrError(product.name, 'Nome do produto não informado')
-            existsOrError(product.price, 'Preço do produto não informado')
-            existsOrError(product.category_id, 'Categoria do produto não informada')
+            existsOrError(name, 'Nome do produto não informado')
+            existsOrError(price, 'Preço do produto não informado')
+            if(!id)existsOrError(category_id, 'Categoria do produto não informada')
         } catch(msg) {
             res.status(400).send(msg)
         }
 
-        if(product.id) {
+        if(!!id) {
+            const products={name, price, ingredients_details, allergic_information}
             app.database('products')
-                .update(product)
-                .where({ id: product.id })
-                .then(_ => res.status(204).send())
-                .catch(err => res.status(500).send(err))
+            .update(products)
+            .where({ id: id })
+            .then(_ => res.status(204).send())
+            .catch(err => res.status(500).send(console.log(err)))
         } else {
+            const products={name, price, ingredients_details, allergic_information, category_id}
             app.database('products')
-                .insert(product)
-                .then(_ => res.status(204).send())
+                .insert(products)
+                .then(_ => res.status(204).send(_))
                 .catch(err => res.status(500).send(err))
         }
     }
 
     const remove = async (req, res) => {
-        try {
-            const productsImage= await app.database('product_image')
-            .where({product_id:req.params.id}).del()
-            console.log(productsImage)
-            const rowsDeleted = await app.database('products')
+        try {       
+           const rowsToDelete = await app.database('products')
+                .where({ id: req.params.id })
+                existsOrError(rowsToDelete, 'Produto não foi encontrado.')
+ 		if(rowsToDelete){await app.database('product_image')
+            		.where({product_id:req.params.id}).del()}
+         
+		
+		await app.database('products')
                 .where({ id: req.params.id }).del()
-                notExistsOrError(rowsDeleted, 'Produto não foi encontrado.')
+
+       if(rowsToDelete)cloudinary.api.delete_resources_by_prefix(`Products/${req.params.id}`, 
+                function(error, result) {console.log(result, error); })
                 res.status(204).send()
             } catch(msg) {
-                res.status(500).send(msg)
+                res.status(500).send(console.log(msg))
             }
     }
 
