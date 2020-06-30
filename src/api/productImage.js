@@ -10,7 +10,6 @@ module.exports = app => {
         .where({id:productImg.product_id}).first()
         const productImageFromDB = await app.database('product_image')
         .where({ product_id:productImg.product_id}).first()
-        console.log(' --------',productImg, 'ProductImage', req.file)
         
         try {
             if(req.method=='POST'){notExistsOrError(productImageFromDB, 'Imagem já foi cadastrada.')}
@@ -24,14 +23,12 @@ module.exports = app => {
             
             if(req.method=='PUT') {
                 
-                console.log('update')
                 app.database('product_image')
                 .update(productImg)
                 .where({ product_id: productImg.product_id })
                 .then(_ => res.status(204).send())
                 .catch(err => res.status(500).send(err))
             } else {
-                console.log('insert')
                 app.database('product_image')
                 .insert(productImg)
                 .then(_ => res.status(204).send())

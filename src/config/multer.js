@@ -7,12 +7,13 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const storageTypes = {
       local: multer.diskStorage({
         destination: (req, file, cb) => {
+          ('Req in multer')
           cb(null, path.resolve(__dirname, "..", "..", "tmp", "uploads"));
         },
         filename: (req, file, cb) => {
+          (file,'Req in multer')
             const fileName = req.path.split('/', 2)[1]
             const fileType = file.mimetype.split('/', 2)[1]
-            console.log(fileName)
             cb(null, `${fileName}-${req.params.id}.${fileType}`);
         }
       }),
@@ -36,8 +37,10 @@ const storageTypes = {
         fileSize:1024 * 1024
       },
       fileFilter: (req, file, cb) => {
+        ('multer', file)
         const allowedMimes = [
           "image/jpeg",
+          "image/jpg",
           "image/pjpeg",
           "image/png",
           "image/gif"
@@ -48,7 +51,7 @@ const storageTypes = {
         } else {
           cb(new Error("Invalid file type."));
         }
-       
+        
       }
     };
     

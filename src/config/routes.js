@@ -31,24 +31,24 @@ module.exports=app=>{
         .delete(app.src.api.adress.remove)
         
         app.route('/categories')
+        .get(app.src.api.productsCategory.get)
         .all(app.src.config.passport.authenticate())
         .post(app.src.api.productsCategory.save)
-        .get(app.src.api.productsCategory.get)
         
         app.route('/categories/:id')
-        .all(app.src.config.passport.authenticate())
         .put(app.src.api.productsCategory.save)
-        .get(app.src.api.productsCategory.getById)
         .delete(app.src.api.productsCategory.remove)
+        .all(app.src.config.passport.authenticate())
+        .get(app.src.api.productsCategory.getById)
         
         app.route('/categories/:id/products')
-        .all(app.src.config.passport.authenticate())
         .get(app.src.api.product.getByCategory)
+        // .all(app.src.config.passport.authenticate())
         
         app.route('/products')
         .all(app.src.config.passport.authenticate())
-        .post(app.src.api.product.save)
-        .get(app.src.api.product.get)
+        .post(admin(app.src.api.product.save))
+        .get(admin(app.src.api.product.get))
         
         app.route('/products/:id')
         .all(app.src.config.passport.authenticate())
@@ -57,11 +57,12 @@ module.exports=app=>{
         .delete(app.src.api.product.remove)
         
         app.route('/products/:id/image')
-        .all(app.src.config.passport.authenticate())
-        .post(multer(multerConfig).single('file'),app.src.api.productImage.save)
-        .put(multer(multerConfig).single('file'),app.src.api.productImage.save)
+ 	.all(app.src.config.passport.authenticate())
+        .post(multer(multerConfig).single("file"),app.src.api.productImage.save)
+        .put(multer(multerConfig).single("file"),app.src.api.productImage.save)
         .get(app.src.api.productImage.getByProduct)
         .delete(app.src.api.productImage.remove)
+       
         
         
         

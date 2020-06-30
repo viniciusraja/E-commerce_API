@@ -9,7 +9,7 @@ module.exports = app => {
     }
 
     const strategy = new Strategy(params, (payload, done) => {
-        app.db('users')
+            app.database('users')
             .where({ id: payload.id })
             .first()
             .then(user => done(null, user ? { ...payload } : false))

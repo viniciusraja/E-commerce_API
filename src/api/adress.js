@@ -44,7 +44,6 @@ module.exports = app => {
 
     const getByUser= async (req, res) => {
         const userId=req.params.id
-        console.log(req.params)
 
         app.database({ a: 'adress',u: 'users'})
             .select('u.id','u.name', 'u.email',{ cep: 'a.CEP', street:'a.street', number:'a.number', complement:'a.complement', referencePoint:'a.reference' })
