@@ -5,7 +5,6 @@
               .inTable('products').notNull().unique()
         table.string('name').notNull()
         table.decimal('size').notNull()
-        table.string('key')
         table.string('url',1000).notNull()
         table.datetime('created_at',{useTz:false}, {precision: 0}).defaultTo(knex.fn.now(0))
     })
